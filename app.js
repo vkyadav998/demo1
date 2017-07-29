@@ -1,47 +1,17 @@
-var express = require("express");
-var app = new express();
-var bodyparser = require("body-parser");
-var mongoose = require("mongoose");
-var Schema = mongoose.Schema;
+let express = require("express");
+let app = new express();
+let mongoose = require("mongoose");
+let bodyParser = require("body-parser");
+let src = require("./src/manager");
 
-mongoose.connect("mongodb://localhost/demo1");
+app.use(bodyParser.json());
 
-var userSchema = new Schema({
-                name: String,
-                email:String,
-                contact:String
-            }, {collection:'users', timestamps:true});
+mongoose.connect("mongodb://localhost/TEST");
 
-mongoose.model('USER_MODEL', userSchema);
+//app.use(express.static("views"))
 
-app.use(bodyparser.json());
-
-var  USER = mongoose.model('USER_MODEL');
-
-app.get('/getall_user', function(req, res)  {
-    USER.find({}, function (err, docs){
-        if(err){
-            console.log(err);
-        }
-        res.json({"success" : true, allItom : docs});
-    });
-});
-
-app.post('/add_user', function(req, res){
-    var user =req.body;
-    console.log("request = " + req.body);
-    var user = new USER(user);
-    user.save(function(err, data) {
-        if (err) return console.error(err);
-        res.json(data);
-    });
-});
-
-app.get("/", function (req, res) {
-    res.json({"message":"hi vipin"});
-})
+app.use("/",src);
 
 app.listen("3001",function () {
-    console.log("app started on 3001");
-});
-
+   console.log("app started on port 3001"); 
+})
